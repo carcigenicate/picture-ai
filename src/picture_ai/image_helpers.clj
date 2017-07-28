@@ -43,10 +43,12 @@
 (defmacro with-color [^Graphics2D g ^Color color & body]
   `(let [old-color# (.getColor ~g)]
      (try
+       (.setColor ~g ~color)
        ~@body
 
        (finally
          (.setColor ~g old-color#)))))
 
 (defn draw-circle [^Graphics2D g x y radius]
-  (.fillOval g x y radius radius))
+  (let [d (* radius 2)]
+    (.fillOval g x y d d)))
