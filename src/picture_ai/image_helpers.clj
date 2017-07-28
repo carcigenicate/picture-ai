@@ -12,7 +12,7 @@
 
 (defn get-channels [color-int]
   (let [c (Color. color-int)]
-    [(.getRed c)`
+    [(.getRed c)
      (.getGreen c)
      (.getBlue c)]))
 
@@ -22,10 +22,13 @@
 
     (ImageIO/write img ext (File. path))))
 
+; - - - - - Reading - - - - -
+
 (defn get-color-at [^BufferedImage img x y]
   (let [c (.getRGB img x y)]
     (get-channels c)))
 
+; TODO: Generalize? Convert so it can handle many images? Waste?
 (defn absolute-channel-diff-sum-at [x y ^BufferedImage img1 ^BufferedImage img2]
   (let [abs #(if (pos? %) % (- %))
         cs1 (get-color-at img1 x y)
@@ -35,3 +38,15 @@
       (map abs
            (map - cs1 cs2)))))
 
+; - - - - - Writing - - - - -
+
+(defmacro with-color [^Graphics2D g ^Color color & body]
+  `(let [old-color# (.getColor ~g)]
+     (try
+       ~@body
+
+       (finally
+         (.setColor ~g old-color#)))))
+
+(defn draw-circle [^Graphics2D g x y radius]
+  (.fillOval g x y radius radius))
