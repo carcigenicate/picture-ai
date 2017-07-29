@@ -18,4 +18,3 @@
            (g/random-int 0 height rand-gen)
            (g/random-int min-radius max-radius rand-gen)
            (random-color rand-gen)))
-
